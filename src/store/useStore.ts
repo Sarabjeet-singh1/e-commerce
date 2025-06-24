@@ -21,15 +21,12 @@ interface StoreState {
   setCartOpen: (open: boolean) => void;
   isMobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
-<<<<<<< HEAD
-=======
   isCheckoutOpen: boolean;
   setCheckoutOpen: (open: boolean) => void;
 
   // Theme
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
->>>>>>> d0c48e3 (added checkout feature)
 }
 
 export const useStore = create<StoreState>()(
@@ -86,12 +83,6 @@ export const useStore = create<StoreState>()(
       setCartOpen: (open) => set({ isCartOpen: open }),
       isMobileMenuOpen: false,
       setMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
-<<<<<<< HEAD
-    }),
-    {
-      name: 'ecommerce-store',
-      partialize: (state) => ({ cart: state.cart, user: state.user }),
-=======
       isCheckoutOpen: false,
       setCheckoutOpen: (open) => set({ isCheckoutOpen: open }),
 
@@ -106,7 +97,6 @@ export const useStore = create<StoreState>()(
         user: state.user, 
         theme: state.theme 
       }),
->>>>>>> d0c48e3 (added checkout feature)
     }
   )
 );
