@@ -10,12 +10,18 @@ export const Cart: React.FC = () => {
     updateQuantity, 
     removeFromCart, 
     getCartTotal,
-    clearCart 
+    clearCart,
+    setCheckoutOpen
   } = useStore();
 
   const total = getCartTotal();
 
   if (!isCartOpen) return null;
+
+  const handleCheckout = () => {
+    setCartOpen(false);
+    setCheckoutOpen(true);
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -26,7 +32,7 @@ export const Cart: React.FC = () => {
       />
       
       {/* Cart Panel */}
-      <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
+      <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl transform transition-transform">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
@@ -50,7 +56,7 @@ export const Cart: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {cart.map((item) => (
-                  <div key={item.product.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg">
+                  <div key={item.product.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg transition-all hover:bg-gray-100">
                     <img
                       src={item.product.image}
                       alt={item.product.name}
@@ -102,14 +108,17 @@ export const Cart: React.FC = () => {
 
           {/* Footer */}
           {cart.length > 0 && (
-            <div className="border-t p-6 space-y-4">
+            <div className="border-t p-6 space-y-4 bg-white">
               <div className="flex justify-between items-center text-lg font-semibold">
                 <span>Total:</span>
                 <span>${total.toFixed(2)}</span>
               </div>
               
               <div className="space-y-2">
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <button 
+                  onClick={handleCheckout}
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors transform hover:scale-105 active:scale-95"
+                >
                   Checkout
                 </button>
                 <button

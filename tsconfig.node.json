@@ -20,4 +20,7 @@
   },
   "include": ["vite.config.ts"]
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> d0c48e3 (added checkout feature)
