@@ -1,7 +1,8 @@
 import React from 'react';
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { ThemeToggle } from './ThemeToggle';
+import { CurrencySelector } from './CurrencySelector';
 
 export const Header: React.FC = () => {
   const { 
@@ -10,7 +11,12 @@ export const Header: React.FC = () => {
     setCartOpen, 
     user, 
     isMobileMenuOpen, 
-    setMobileMenuOpen 
+    setMobileMenuOpen,
+    setWishlistOpen,
+    setAccountOpen,
+    wishlist,
+    selectedCurrency,
+    setCurrency
   } = useStore();
 
   const cartItemsCount = getCartItemsCount();
@@ -61,11 +67,33 @@ export const Header: React.FC = () => {
 
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
+            {/* Currency Selector */}
+            <CurrencySelector
+              selectedCurrency={selectedCurrency}
+              onCurrencyChange={setCurrency}
+            />
+
             {/* Theme Toggle */}
             <ThemeToggle />
 
+            {/* Wishlist */}
+            <button
+              onClick={() => setWishlistOpen(true)}
+              className="relative p-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              <Heart className="h-6 w-6" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                  {wishlist.length}
+                </span>
+              )}
+            </button>
+
             {/* User Account */}
-            <button className="p-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <button
+              onClick={() => setAccountOpen(true)}
+              className="p-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
               <User className="h-6 w-6" />
             </button>
 

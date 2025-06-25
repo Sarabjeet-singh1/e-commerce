@@ -82,7 +82,7 @@ export const products: Product[] = [
     description: 'High-performance lens for professional photography.',
     rating: 4.9,
     reviews: 234,
-    inStock: true,
+    inStock: false,
   },
   {
     id: '8',
@@ -95,6 +95,53 @@ export const products: Product[] = [
     reviews: 345,
     inStock: true,
   },
+  {
+    id: '9',
+    name: 'Gaming Mechanical Keyboard',
+    price: 149.99,
+    originalPrice: 199.99,
+    image: 'https://images.pexels.com/photos/2115257/pexels-photo-2115257.jpeg?auto=compress&cs=tinysrgb&w=500',
+    category: 'Electronics',
+    description: 'RGB backlit mechanical keyboard with tactile switches.',
+    rating: 4.7,
+    reviews: 567,
+    inStock: true,
+    featured: true,
+  },
+  {
+    id: '10',
+    name: 'Yoga Mat Premium',
+    price: 79.99,
+    image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=500',
+    category: 'Sports',
+    description: 'Non-slip premium yoga mat for all types of practice.',
+    rating: 4.5,
+    reviews: 423,
+    inStock: true,
+  },
+  {
+    id: '11',
+    name: 'Bluetooth Speaker',
+    price: 129.99,
+    image: 'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg?auto=compress&cs=tinysrgb&w=500',
+    category: 'Electronics',
+    description: 'Portable waterproof speaker with 360-degree sound.',
+    rating: 4.6,
+    reviews: 789,
+    inStock: false,
+  },
+  {
+    id: '12',
+    name: 'Designer Sunglasses',
+    price: 199.99,
+    originalPrice: 299.99,
+    image: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=500',
+    category: 'Fashion',
+    description: 'UV protection designer sunglasses with polarized lenses.',
+    rating: 4.8,
+    reviews: 234,
+    inStock: true,
+  }
 ];
 
 export const categories = [
@@ -104,4 +151,5 @@ export const categories = [
   'Food',
   'Beauty',
   'Home',
+  'Sports'
 ];

@@ -4,10 +4,26 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        // Dark mode color palette
+        gray: {
+          50: '#f9fafb',
+          100: '#f3f4f6',
+          200: '#e5e7eb',
+          300: '#d1d5db',
+          400: '#9ca3af',
+          500: '#6b7280',
+          600: '#4b5563',
+          700: '#374151',
+          800: '#1f2937',
+          900: '#111827',
+        }
+      },
       animation: {
         'fadeIn': 'fadeIn 0.3s ease-in-out',
         'slideIn': 'slideIn 0.3s ease-out',
         'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'bounce': 'bounce 1s infinite',
       },
       keyframes: {
         fadeIn: {
@@ -19,6 +35,12 @@ export default {
           '100%': { transform: 'translateX(0)' },
         },
       },
+      backdropBlur: {
+        xs: '2px',
+      },
+      transitionProperty: {
+        'colors': 'color, background-color, border-color, text-decoration-color, fill, stroke',
+      }
     },
   },
   plugins: [],
