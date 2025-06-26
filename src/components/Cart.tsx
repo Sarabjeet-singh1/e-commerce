@@ -11,7 +11,9 @@ export const Cart: React.FC = () => {
     removeFromCart, 
     getCartTotal,
     clearCart,
-    setCheckoutOpen
+    setCheckoutOpen,
+    selectedCurrency,
+    convertPrice
   } = useStore();
 
   const total = getCartTotal();
@@ -67,7 +69,9 @@ export const Cart: React.FC = () => {
                       <h3 className="font-medium text-gray-900 text-sm">
                         {item.product.name}
                       </h3>
-                      <p className="text-gray-600 text-sm">${item.product.price}</p>
+                      <p className="text-gray-600 text-sm">
+                        {selectedCurrency.symbol}{convertPrice(item.product.price).toFixed(2)}
+                      </p>
                       
                       {/* Quantity Controls */}
                       <div className="flex items-center space-x-2 mt-2">
@@ -91,7 +95,7 @@ export const Cart: React.FC = () => {
 
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {selectedCurrency.symbol}{(convertPrice(item.product.price) * item.quantity).toFixed(2)}
                       </p>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
@@ -111,7 +115,7 @@ export const Cart: React.FC = () => {
             <div className="border-t p-6 space-y-4 bg-white">
               <div className="flex justify-between items-center text-lg font-semibold">
                 <span>Total:</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{selectedCurrency.symbol}{total.toFixed(2)}</span>
               </div>
               
               <div className="space-y-2">

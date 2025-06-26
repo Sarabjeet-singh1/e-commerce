@@ -14,7 +14,7 @@ interface CheckoutModalProps {
 type CheckoutStep = 'shipping' | 'payment' | 'review' | 'confirmation';
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
-  const { cart, getCartTotal, clearCart } = useStore();
+  const { cart, getCartTotal, clearCart, selectedCurrency, convertPrice } = useStore();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
@@ -65,6 +65,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
     const orderNum = `ORD-${Date.now().toString().slice(-6)}`;
     setOrderNumber(orderNum);
     
+    clearCart();
     setIsProcessing(false);
     handleNext();
   };
@@ -185,7 +186,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                             <p className="text-gray-600 text-sm">Qty: {item.quantity}</p>
                           </div>
                           <p className="font-semibold">
-                            ${(item.product.price * item.quantity).toFixed(2)}
+                            {selectedCurrency.symbol}{(convertPrice(item.product.price) * item.quantity).toFixed(2)}
                           </p>
                         </div>
                       ))}
@@ -206,7 +207,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                         Processing Order...
                       </>
                     ) : (
-                      `Place Order - $${total.toFixed(2)}`
+                      `Place Order - ${selectedCurrency.symbol}${total.toFixed(2)}`
                     )}
                   </button>
                 </div>
@@ -254,7 +255,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
                       <p className="text-gray-600 text-sm">Qty: {item.quantity}</p>
                     </div>
                     <p className="font-semibold text-sm">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      {selectedCurrency.symbol}{(convertPrice(item.product.price) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 ))}
@@ -263,19 +264,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose })
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{selectedCurrency.symbol}{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                  <span>{shipping === 0 ? 'Free' : `${selectedCurrency.symbol}${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{selectedCurrency.symbol}{tax.toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{selectedCurrency.symbol}{total.toFixed(2)}</span>
                 </div>
               </div>
 

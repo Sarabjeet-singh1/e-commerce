@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, X, ChevronDown, Star } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 interface FilterOptions {
-  categories: string[];
   priceRange: [number, number];
   rating: number;
   inStock: boolean;
@@ -31,6 +31,17 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
     availability: true
   });
 
+  // Local state for staged filter changes
+  const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
+
+  // Get selected currency from store
+  const { selectedCurrency } = useStore();
+
+  // Sync local state with parent filters when modal opens
+  useEffect(() => {
+    if (isOpen) setLocalFilters(filters);
+  }, [isOpen, filters]);
+
   const categories = [
     'Electronics',
     'Fashion',
@@ -49,20 +60,12 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
     }));
   };
 
-  const handleCategoryChange = (category: string) => {
-    const newCategories = filters.categories.includes(category)
-      ? filters.categories.filter(c => c !== category)
-      : [...filters.categories, category];
-    
-    onFiltersChange({ ...filters, categories: newCategories });
-  };
-
   const handlePriceChange = (min: number, max: number) => {
-    onFiltersChange({ ...filters, priceRange: [min, max] });
+    setLocalFilters({ ...localFilters, priceRange: [min, max] });
   };
 
   const handleRatingChange = (rating: number) => {
-    onFiltersChange({ ...filters, rating });
+    setLocalFilters({ ...localFilters, rating });
   };
 
   if (!isOpen) return null;
@@ -76,7 +79,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       />
       
       {/* Filter Panel */}
-      <div className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl lg:relative lg:w-full lg:shadow-none border-l border-gray-200 dark:border-gray-700 lg:border-l-0 lg:border lg:rounded-lg">
+      <div className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-xl lg:relative lg:w-full lg:shadow-none border-l border-gray-200 dark:border-gray-700 lg:border-l-0 lg:border lg:rounded-lg flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
@@ -85,7 +88,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
           </div>
           <div className="flex items-center space-x-2">
             <button
-              onClick={onClearFilters}
+              onClick={() => { onClearFilters(); setLocalFilters({ priceRange: [0, 100000], rating: 0, inStock: false, onSale: false }); }}
               className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
             >
               Clear All
@@ -100,36 +103,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         </div>
 
         {/* Filter Content */}
-        <div className="p-6 space-y-6 overflow-y-auto h-full pb-20">
-          {/* Categories */}
-          <div>
-            <button
-              onClick={() => toggleSection('category')}
-              className="flex items-center justify-between w-full text-left"
-            >
-              <h4 className="font-semibold text-gray-900 dark:text-white">Category</h4>
-              <ChevronDown className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform ${
-                expandedSections.category ? 'rotate-180' : ''
-              }`} />
-            </button>
-            
-            {expandedSections.category && (
-              <div className="mt-3 space-y-2">
-                {categories.map(category => (
-                  <label key={category} className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.categories.includes(category)}
-                      onChange={() => handleCategoryChange(category)}
-                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800"
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{category}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-
+        <div className="p-6 space-y-6 overflow-y-auto flex-1 pb-32">
           {/* Price Range */}
           <div>
             <button
@@ -145,19 +119,21 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             {expandedSections.price && (
               <div className="mt-3 space-y-3">
                 <div className="flex items-center space-x-3">
+                  <span className="text-lg">{selectedCurrency.symbol}</span>
                   <input
                     type="number"
                     placeholder="Min"
-                    value={filters.priceRange[0]}
-                    onChange={(e) => handlePriceChange(Number(e.target.value), filters.priceRange[1])}
+                    value={localFilters.priceRange[0]}
+                    onChange={(e) => handlePriceChange(Number(e.target.value), localFilters.priceRange[1])}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   />
                   <span className="text-gray-500 dark:text-gray-400">to</span>
+                  <span className="text-lg">{selectedCurrency.symbol}</span>
                   <input
                     type="number"
                     placeholder="Max"
-                    value={filters.priceRange[1]}
-                    onChange={(e) => handlePriceChange(filters.priceRange[0], Number(e.target.value))}
+                    value={localFilters.priceRange[1]}
+                    onChange={(e) => handlePriceChange(localFilters.priceRange[0], Number(e.target.value))}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -175,12 +151,12 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                       <input
                         type="radio"
                         name="priceRange"
-                        checked={filters.priceRange[0] === min && filters.priceRange[1] === max}
+                        checked={localFilters.priceRange[0] === min && localFilters.priceRange[1] === max}
                         onChange={() => handlePriceChange(min, max)}
                         className="text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
                       />
                       <span className="text-sm text-gray-700 dark:text-gray-300">
-                        ${min} - ${max}
+                        {selectedCurrency.symbol}{min} - {selectedCurrency.symbol}{max}
                       </span>
                     </label>
                   ))}
@@ -208,7 +184,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                     <input
                       type="radio"
                       name="rating"
-                      checked={filters.rating === rating}
+                      checked={localFilters.rating === rating}
                       onChange={() => handleRatingChange(rating)}
                       className="text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
                     />
@@ -250,8 +226,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={filters.inStock}
-                    onChange={(e) => onFiltersChange({ ...filters, inStock: e.target.checked })}
+                    checked={localFilters.inStock}
+                    onChange={(e) => setLocalFilters({ ...localFilters, inStock: e.target.checked })}
                     className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">In Stock</span>
@@ -260,8 +236,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={filters.onSale}
-                    onChange={(e) => onFiltersChange({ ...filters, onSale: e.target.checked })}
+                    checked={localFilters.onSale}
+                    onChange={(e) => setLocalFilters({ ...localFilters, onSale: e.target.checked })}
                     className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300">On Sale</span>
@@ -269,6 +245,16 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               </div>
             )}
           </div>
+        </div>
+
+        {/* Apply Button */}
+        <div className="absolute bottom-0 left-0 w-full p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex justify-center z-10">
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+            onClick={() => { onFiltersChange(localFilters); onClose(); }}
+          >
+            Apply
+          </button>
         </div>
       </div>
     </div>

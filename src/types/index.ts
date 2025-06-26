@@ -28,6 +28,8 @@ export interface User {
   avatar?: string;
   phone?: string;
   dateJoined?: Date;
+  region?: string;
+  preferredCurrency?: string;
 }
 
 export interface Order {
@@ -39,25 +41,40 @@ export interface Order {
   shippingAddress: Address;
   paymentMethod: string;
   trackingNumber?: string;
+  currency: string;
 }
 
 export interface Address {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
+  id?: string;
   type?: 'home' | 'work' | 'other';
   isDefault?: boolean;
+  country: string;
+  // Common fields
+  street: string;
+  city: string;
+  // Region-specific fields
+  state?: string;
+  zipCode?: string;
+  pinCode?: string;
+  postcode?: string;
+  area?: string;
+  locality?: string;
+  houseNumber?: string;
+  suburb?: string;
+  unit?: string;
+  province?: string;
+  region?: string;
+  phone?: string;
 }
 
 export interface PaymentMethodData {
   id: string;
-  type: 'card' | 'paypal' | 'apple-pay' | 'google-pay';
+  type: 'card' | 'paypal' | 'apple-pay' | 'google-pay' | 'upi' | 'net-banking';
   last4?: string;
   brand?: string;
   expiry?: string;
   isDefault: boolean;
+  country?: string;
 }
 
 export interface Review {
@@ -80,6 +97,25 @@ export interface Currency {
   symbol: string;
   name: string;
   rate: number;
+  country: string;
+  flag: string;
+}
+
+export interface Country {
+  code: string;
+  name: string;
+  flag: string;
+  currency: string;
+  phoneCode: string;
+  addressFormat: AddressFormat;
+}
+
+export interface AddressFormat {
+  fields: string[];
+  required: string[];
+  postalCodePattern?: string;
+  phonePattern?: string;
+  labels: Record<string, string>;
 }
 
 export interface WishlistItem {

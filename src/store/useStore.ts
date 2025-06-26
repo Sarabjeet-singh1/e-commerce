@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Product, CartItem, User, Order, Address, PaymentMethodData, Currency } from '../types';
+import { Product, CartItem, User, Order, Address, PaymentMethodData, Currency, Country } from '../types';
+import { currencies, countries } from '../data/regions';
 
 interface StoreState {
   // Cart
@@ -38,7 +39,9 @@ interface StoreState {
   addPaymentMethod: (method: PaymentMethodData) => void;
   removePaymentMethod: (id: string) => void;
 
-  // Currency
+  // Region & Currency
+  selectedCountry: Country;
+  setCountry: (country: Country) => void;
   selectedCurrency: Currency;
   setCurrency: (currency: Currency) => void;
   convertPrice: (price: number) => number;
@@ -66,12 +69,9 @@ interface StoreState {
   setTheme: (theme: 'light' | 'dark') => void;
 }
 
-const defaultCurrency: Currency = {
-  code: 'USD',
-  symbol: '$',
-  name: 'US Dollar',
-  rate: 1
-};
+// Default to India
+const defaultCountry = countries.find(c => c.code === 'IN') || countries[0];
+const defaultCurrency = currencies.find(c => c.code === 'INR') || currencies[0];
 
 export const useStore = create<StoreState>()(
   persist(
@@ -141,10 +141,12 @@ export const useStore = create<StoreState>()(
       // User
       user: {
         id: '1',
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '+1 (555) 123-4567',
-        dateJoined: new Date('2023-01-15')
+        name: 'Rajesh Kumar',
+        email: 'rajesh.kumar@example.com',
+        phone: '+91 98765 43210',
+        dateJoined: new Date('2023-01-15'),
+        region: 'IN',
+        preferredCurrency: 'INR'
       },
       setUser: (user) => set({ user }),
 
@@ -153,34 +155,38 @@ export const useStore = create<StoreState>()(
         {
           id: 'ORD-001',
           items: [],
-          total: 299.99,
+          total: 24999.99,
           status: 'delivered',
           createdAt: new Date('2024-01-15'),
           shippingAddress: {
-            street: '123 Main St',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001',
-            country: 'United States'
+            street: '123, MG Road',
+            area: 'Connaught Place',
+            city: 'New Delhi',
+            state: 'Delhi',
+            pinCode: '110001',
+            country: 'IN'
           },
-          paymentMethod: 'Credit Card',
-          trackingNumber: 'TRK123456789'
+          paymentMethod: 'UPI',
+          trackingNumber: 'TRK123456789',
+          currency: 'INR'
         },
         {
           id: 'ORD-002',
           items: [],
-          total: 149.99,
+          total: 12499.99,
           status: 'shipped',
           createdAt: new Date('2024-01-20'),
           shippingAddress: {
-            street: '123 Main St',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001',
-            country: 'United States'
+            street: '456, Brigade Road',
+            area: 'Commercial Street',
+            city: 'Bangalore',
+            state: 'Karnataka',
+            pinCode: '560001',
+            country: 'IN'
           },
-          paymentMethod: 'PayPal',
-          trackingNumber: 'TRK987654321'
+          paymentMethod: 'Credit Card',
+          trackingNumber: 'TRK987654321',
+          currency: 'INR'
         }
       ],
       addOrder: (order) => {
@@ -190,20 +196,24 @@ export const useStore = create<StoreState>()(
       // Addresses
       addresses: [
         {
-          street: '123 Main Street',
-          city: 'New York',
-          state: 'NY',
-          zipCode: '10001',
-          country: 'United States',
+          id: '1',
+          street: '123, MG Road',
+          area: 'Connaught Place',
+          city: 'New Delhi',
+          state: 'Delhi',
+          pinCode: '110001',
+          country: 'IN',
           type: 'home',
           isDefault: true
         },
         {
-          street: '456 Business Ave',
-          city: 'New York',
-          state: 'NY',
-          zipCode: '10002',
-          country: 'United States',
+          id: '2',
+          street: '456, Brigade Road',
+          area: 'Commercial Street',
+          city: 'Bangalore',
+          state: 'Karnataka',
+          pinCode: '560001',
+          country: 'IN',
           type: 'work',
           isDefault: false
         }
@@ -226,19 +236,21 @@ export const useStore = create<StoreState>()(
       paymentMethods: [
         {
           id: '1',
-          type: 'card',
-          last4: '4242',
-          brand: 'Visa',
-          expiry: '12/25',
-          isDefault: true
+          type: 'upi',
+          last4: '9876',
+          brand: 'UPI',
+          expiry: '',
+          isDefault: true,
+          country: 'IN'
         },
         {
           id: '2',
           type: 'card',
-          last4: '5555',
-          brand: 'Mastercard',
-          expiry: '08/26',
-          isDefault: false
+          last4: '4242',
+          brand: 'Visa',
+          expiry: '12/25',
+          isDefault: false,
+          country: 'IN'
         }
       ],
       addPaymentMethod: (method) => {
@@ -248,7 +260,9 @@ export const useStore = create<StoreState>()(
         set({ paymentMethods: get().paymentMethods.filter(method => method.id !== id) });
       },
 
-      // Currency
+      // Region & Currency
+      selectedCountry: defaultCountry,
+      setCountry: (country) => set({ selectedCountry: country }),
       selectedCurrency: defaultCurrency,
       setCurrency: (currency) => set({ selectedCurrency: currency }),
       convertPrice: (price) => {
@@ -285,6 +299,7 @@ export const useStore = create<StoreState>()(
         wishlist: state.wishlist,
         user: state.user, 
         theme: state.theme,
+        selectedCountry: state.selectedCountry,
         selectedCurrency: state.selectedCurrency,
         viewMode: state.viewMode,
         addresses: state.addresses,

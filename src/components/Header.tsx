@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, ShoppingCart, User, Menu, X, Heart } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { ThemeToggle } from './ThemeToggle';
-import { CurrencySelector } from './CurrencySelector';
+import { RegionSelector } from './RegionSelector';
 
 export const Header: React.FC = () => {
   const { 
@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
     setAccountOpen,
     wishlist,
     selectedCurrency,
-    setCurrency
+    selectedCountry
   } = useStore();
 
   const cartItemsCount = getCartItemsCount();
@@ -28,7 +28,9 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">EliteStore</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                EliteStore {selectedCountry.flag}
+              </h1>
             </div>
           </div>
 
@@ -67,11 +69,8 @@ export const Header: React.FC = () => {
 
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
-            {/* Currency Selector */}
-            <CurrencySelector
-              selectedCurrency={selectedCurrency}
-              onCurrencyChange={setCurrency}
-            />
+            {/* Region Selector */}
+            <RegionSelector />
 
             {/* Theme Toggle */}
             <ThemeToggle />
