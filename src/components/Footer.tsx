@@ -85,7 +85,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 EliteStore India Pvt. Ltd. All rights reserved. | GST: 07AABCE2207R1Z5
+            © 2025 EliteStore India Pvt. Ltd. All rights reserved. | GST: 07AABCE2207R1Z5
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
