@@ -29,7 +29,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                EliteStore {selectedCountry.flag}
+                EliteStore
               </h1>
             </div>
           </div>
